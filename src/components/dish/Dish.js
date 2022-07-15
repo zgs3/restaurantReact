@@ -21,11 +21,15 @@ function Dish() {
   const [newImageLink, setNewImageLink] = useState('');
   const [newRestaurantId, setNewRestaurantId] = useState('');
   const [editedDish, setEditedDish] = useState({});
-  
+
   const [showDiv, setShowDiv] = useState(false);
-  
+
   // RATINGS
+  const [rating, setRating] = useState('');
+  const [newRating, setNewRating] = useState({});
   const [ratings, setRatings] = useState([]);
+
+  const [rateMessage, setRateMessage] = useState(false);
 
 
   function deleteDish(id, e) {
@@ -73,7 +77,7 @@ function Dish() {
           setDish(result);
         })
   }
-  
+
   function updateDish(id, e) {
     e.preventDefault();
     fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
@@ -97,6 +101,27 @@ function Dish() {
       })
   }
 
+  function addRating(id, e) {
+    e.preventDefault();
+    fetch("http://127.0.0.1:8000/api/v1/ratings", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        rating: id,
+        dish_id: rating
+      })
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          // console.log('success');
+          setRateMessage(true);
+        }
+      })
+  }
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/dishes")
       .then(res => res.json())
@@ -111,8 +136,28 @@ function Dish() {
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/ratings")
       .then(res => res.json())
-      .then(result => setRatings(result));
+      .then(result => {
+        // console.log(Object.keys(result));
+        // console.log(result);
+        setRatings(result);
+      });
   }, [])
+
+  // const filtered = ratings.filter(rating => {
+  //   // dishes.filter(id => {
+  //   //   return id;
+  //   // })
+  //   return rating.dish_id == 4;
+  // });
+
+  // const filteredDish = dishes.filter(dish => {
+  //   // dishes.filter(id => {
+  //   //   return id;
+  //   // })
+  //   return rating.dish_id == 4;
+  // });
+
+  // console.log(filtered);
 
 
   if (!isLoaded) {
@@ -123,6 +168,12 @@ function Dish() {
     return (
       <>
         <div className="container">
+          {(rateMessage)
+            ? <div className='d-flex justify-content-center bg-success my-3 p-1 rounded-3'>
+              <h4>Thank you for your rating!</h4>
+            </div>
+            : <span></span>
+          }
           <table className="table table-striped table-hover">
             <thead>
               <tr>
@@ -131,6 +182,7 @@ function Dish() {
                 <th>Photo</th>
                 <th>Rating</th>
                 <th>Available in</th>
+                <th>Rate!</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -140,8 +192,23 @@ function Dish() {
                   <td>{dish.name}</td>
                   <td>{dish.price} Eur.</td>
                   <td> <img src={dish.image_link} alt='Photo of the dish'></img> </td>
-                  <td> TBA </td>
+                  <td>
+                    TBA
+                  </td>
                   <td>{dish.restaurant.title}</td>
+
+                  <td>
+                    <form>
+                      <select onChange={(e) => setRating(e.target.value)}>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                      <input className='btn btn-success' type='submit' value='Rate!' onClick={(e) => addRating(dish.id, e)} />
+                    </form>
+                  </td>
 
                   <td>
                     <button
