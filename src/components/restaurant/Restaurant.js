@@ -1,3 +1,4 @@
+import { hasSelectionSupport } from '@testing-library/user-event/dist/utils';
 import React, { useState, useEffect } from 'react';
 
 function Restaurant() {
@@ -5,6 +6,7 @@ function Restaurant() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [restaurants, setRestaurants] = useState([]);
+  const [sortOrder, setSordOrder] = useState();
   const [restaurant, setRestaurant] = useState([]);
 
   // ALL RESTAURANTS
@@ -23,7 +25,7 @@ function Restaurant() {
 
   const [showDiv, setShowDiv] = useState(false);
 
-  function deleteRestaurant(id, e) {
+  function deleteRestaurant(id) {
     fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, { method: 'DELETE' })
       .then((response) => {
         if (response.status === 200) {
@@ -92,6 +94,42 @@ function Restaurant() {
         })
   }
 
+  if (sortOrder === true) {
+    sortAscending();
+  } else if (sortOrder === false) {
+    sortDescending();
+  }
+
+  function sortAscending() {
+    const list = restaurants;
+    list.sort((a, b) => {
+      let first = a.title.toLowerCase(),
+        second = b.title.toLowerCase();
+      if (first < second) {
+        return -1;
+      }
+      if (first > second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  function sortDescending() {
+    const list = restaurants;
+    list.sort((a, b) => {
+      let first = a.title.toLowerCase(),
+        second = b.title.toLowerCase();
+      if (first > second) {
+        return -1;
+      }
+      if (first < second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/restaurants")
       .then(res => res.json())
@@ -113,8 +151,15 @@ function Restaurant() {
         <div className="container">
           <table className="table table-striped table-hover">
             <thead>
-              <tr>
-                <th>Title</th>
+              <tr className='fs-4'>
+                <th>
+                  Title
+                  <button
+                    className='btn btn-outline-dark p-1 mx-2'
+                    onClick={() => setSordOrder(!sortOrder)}>
+                    Sort
+                  </button>
+                </th>
                 <th>City</th>
                 <th>Adress</th>
                 <th>Working hours</th>
@@ -131,7 +176,7 @@ function Restaurant() {
                   <td>
                     <button
                       className="btn btn-dark"
-                      onClick={(e) => deleteRestaurant(restaurant.id, e)}>
+                      onClick={(e) => deleteRestaurant(restaurant.id)}>
                       Delete
                     </button>
                     <button

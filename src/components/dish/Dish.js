@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './Dish.module.css'
 
 function Dish() {
@@ -7,6 +7,10 @@ function Dish() {
 
   const [dishes, setDishes] = useState([]);
   const [dish, setDish] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
+
+  const [sortPrice, setSordPrice] = useState();
+  const [sortTitle, setSordTitle] = useState();
 
   // ALL DISHES
   const [newDish, setNewDish] = useState({});
@@ -16,20 +20,20 @@ function Dish() {
   const [restaurantId, setRestaurantId] = useState('');
 
   // DISH TO EDIT
-  const [newName, setNewName] = useState('');
-  const [newPrice, setNewPrice] = useState('');
-  const [newImageLink, setNewImageLink] = useState('');
-  const [newRestaurantId, setNewRestaurantId] = useState('');
+  // const [newName, setNewName] = useState('');
+  // const [newPrice, setNewPrice] = useState('');
+  // const [newImageLink, setNewImageLink] = useState('');
+  // const [newRestaurantId, setNewRestaurantId] = useState('');
   const [editedDish, setEditedDish] = useState({});
 
   const [showDiv, setShowDiv] = useState(false);
 
   // RATINGS
   const [rating, setRating] = useState('');
-  const [newRating, setNewRating] = useState({});
   const [ratings, setRatings] = useState([]);
 
   const [rateMessage, setRateMessage] = useState(false);
+  const [loadRating, setLoadRatings] = useState(false);
 
 
   function deleteDish(id, e) {
@@ -69,12 +73,13 @@ function Dish() {
   }
 
   function showEdit(id) {
-    setShowDiv(!showDiv);
     fetch("http://127.0.0.1:8000/api/v1/dishes/" + id)
       .then(res => res.json())
       .then(
         (result) => {
           setDish(result);
+          setShowDiv(!showDiv);
+          // setEditLoaded(true);
         })
   }
 
@@ -110,17 +115,105 @@ function Dish() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        rating: id,
-        dish_id: rating
+        rating: rating,
+        dish_id: id
       })
     })
       .then((response) => {
         if (response.status === 201) {
-          // console.log('success');
           setRateMessage(true);
         }
+        setLoadRatings(!loadRating);
       })
   }
+
+  function countAvg(dishId) {
+    let rateCount = 0;
+    let sumOfRates = 0;
+    ratings.map(rating => {
+      if (rating.dish_id === dishId) {
+        rateCount++;
+        sumOfRates += rating.rating;
+      }
+    })
+    return (sumOfRates / rateCount);
+  }
+
+  if (sortPrice === true) {
+    sortPriceAsc();
+  } else if (sortPrice === false) {
+    sortPriceDesc();
+  }
+
+  function sortPriceAsc() {
+    const list = dishes;
+    list.sort((a, b) => {
+      let first = a.price,
+        second = b.price;
+      if (first < second) {
+        return -1;
+      }
+      if (first > second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  function sortPriceDesc() {
+    const list = dishes;
+    list.sort((a, b) => {
+      let first = a.price,
+        second = b.price;
+      if (first > second) {
+        return -1;
+      }
+      if (first < second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  if (sortTitle === true) {
+    sortTitleAsc();
+  } else if (sortTitle  === false) {
+    sortTitleDesc();
+  }
+
+  function sortTitleAsc() {
+    const list = dishes;
+    list.sort((a, b) => {
+      let first = a.restaurant.title.toLowerCase(),
+        second = b.restaurant.title.toLowerCase();
+      if (first < second) {
+        return -1;
+      }
+      if (first > second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+  function sortTitleDesc() {
+    const list = dishes;
+    list.sort((a, b) => {
+      let first = a.restaurant.title.toLowerCase(),
+        second = b.restaurant.title.toLowerCase();
+      if (first > second) {
+        return -1;
+      }
+      if (first < second) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
+
+
+
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/dishes")
@@ -137,28 +230,19 @@ function Dish() {
     fetch("http://127.0.0.1:8000/api/v1/ratings")
       .then(res => res.json())
       .then(result => {
-        // console.log(Object.keys(result));
-        // console.log(result);
         setRatings(result);
       });
+  }, [loadRating])
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/restaurants")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setRestaurants(result);
+        },
+        (error) => { setError(error); setIsLoaded(true); })
   }, [])
-
-  // const filtered = ratings.filter(rating => {
-  //   // dishes.filter(id => {
-  //   //   return id;
-  //   // })
-  //   return rating.dish_id == 4;
-  // });
-
-  // const filteredDish = dishes.filter(dish => {
-  //   // dishes.filter(id => {
-  //   //   return id;
-  //   // })
-  //   return rating.dish_id == 4;
-  // });
-
-  // console.log(filtered);
-
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -176,12 +260,26 @@ function Dish() {
           }
           <table className="table table-striped table-hover">
             <thead>
-              <tr>
+              <tr className='fs-4'>
                 <th>Name</th>
-                <th>Price</th>
+                <th>
+                  Price
+                  <button
+                    className='btn btn-outline-dark p-1 mx-2'
+                    onClick={() => setSordPrice(!sortPrice)}>
+                    Sort
+                  </button>
+                </th>
                 <th>Photo</th>
                 <th>Rating</th>
-                <th>Available in</th>
+                <th>
+                  Available in
+                  <button
+                    className='btn btn-outline-dark p-1 mx-2'
+                    onClick={() => setSordTitle(!sortTitle)}>
+                    Sort
+                  </button>
+                </th>
                 <th>Rate!</th>
                 <th>Actions</th>
               </tr>
@@ -192,21 +290,25 @@ function Dish() {
                   <td>{dish.name}</td>
                   <td>{dish.price} Eur.</td>
                   <td> <img src={dish.image_link} alt='Photo of the dish'></img> </td>
-                  <td>
-                    TBA
+                  <td className='fs-5'>
+                    {(countAvg(dish.id))
+                      ? countAvg(dish.id).toPrecision(2)
+                      : 'Not rated'
+                    }!
                   </td>
                   <td>{dish.restaurant.title}</td>
-
                   <td>
                     <form>
-                      <select onChange={(e) => setRating(e.target.value)}>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                      </select>
-                      <input className='btn btn-success' type='submit' value='Rate!' onClick={(e) => addRating(dish.id, e)} />
+                      <div className='d-flex'>
+                        <select className="form-select form-select-sm" onChange={(e) => setRating(e.target.value)}>
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                        </select>
+                        <input className='btn btn-success' type='submit' value='Rate!' onClick={(e) => addRating(dish.id, e)} />
+                      </div>
                     </form>
                   </td>
 
@@ -218,7 +320,7 @@ function Dish() {
                     </button>
                     <button
                       className="btn btn-primary"
-                      onClick={(e) => {
+                      onClick={() => {
                         showEdit(dish.id)
                       }}>
                       Edit
@@ -244,7 +346,7 @@ function Dish() {
                       className='form-control m-auto'
                       placeholder={dish.name}
                       onChange={(e) => {
-                        setNewName(e.target.value);
+                        // setNewName(e.target.value);
                         setEditedDish({ ...editedDish, name: e.target.value });
                       }} />
                   </div>
@@ -256,7 +358,7 @@ function Dish() {
                       placeholder={dish.price}
                       className='form-control m-auto'
                       onChange={(e) => {
-                        setNewPrice(e.target.value);
+                        // setNewPrice(e.target.value);
                         setEditedDish({ ...editedDish, price: e.target.value });
                       }} />
                   </div>
@@ -268,22 +370,23 @@ function Dish() {
                       placeholder={dish.image_link}
                       className='form-control m-auto'
                       onChange={(e) => {
-                        setNewImageLink(e.target.value);
+                        // setNewImageLink(e.target.value);
                         setEditedDish({ ...editedDish, image_link: e.target.value });
                       }} />
                   </div>
                   <div className='row-md-6'>
-                    <input
-                      type="number"
-                      name='restaurantId'
-                      placeholder={dish.restaurant_id}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        setNewRestaurantId(e.target.value);
-                        setEditedDish({ ...editedDish, restaurant_id: e.target.value });
-                      }} />
-                  </div>
 
+                    <select
+                      className="form-select"
+                      onChange={(e) => {
+                        setEditedDish({ ...editedDish, restaurant_id: e.target.value })
+                      }}>
+                      <option value={dish.restaurant_id} >{dish.restaurant.title}</option>
+                      {restaurants.filter(selected => selected.title !== dish.restaurant.title).map(restaurant => (
+                        <option key={restaurant.id} value={restaurant.id} >{restaurant.title}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className='my-4'>
                     <input className='btn btn-success px-5' type='submit' value='Edit' onClick={(e) => updateDish(dish.id, e)} />
                   </div>
@@ -335,18 +438,15 @@ function Dish() {
                         }} />
                     </div>
                     <div className='row-md-6'>
-                      <input
-                        type="number"
-                        name='restaurant'
-                        placeholder='Restaurant'
-                        className='form-control m-auto'
-                        value={restaurantId}
-                        onChange={(e) => {
-                          setRestaurantId(e.target.value);
-                          setNewDish({ ...newDish, restaurant_id: e.target.value });
-                        }} />
+                      <select className="form-select" onChange={(e) => {
+                        setNewDish({ ...newDish, restaurant_id: e.target.value })
+                      }}>
+                        <option selected disabled aria-required>Select a restaurant</option>
+                        {restaurants.map(restaurant => (
+                          <option key={restaurant.id} value={restaurant.id}>{restaurant.title}</option>
+                        ))}
+                      </select>
                     </div>
-
                     <div className='my-4'>
                       <input className='btn btn-success px-5' type='submit' value='Add' onClick={(e) => addDish(e)} />
                     </div>
@@ -356,7 +456,7 @@ function Dish() {
               </div>
             </div>
           }
-        </div>
+        </div >
       </>
     );
   }
