@@ -1,13 +1,15 @@
-import { hasSelectionSupport } from '@testing-library/user-event/dist/utils';
+// import { hasSelectionSupport } from '@testing-library/user-event/dist/utils';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Restaurant() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [restaurants, setRestaurants] = useState([]);
   const [sortOrder, setSordOrder] = useState();
   const [restaurant, setRestaurant] = useState([]);
+  const [token, _] = useState(localStorage.getItem("token"));
+  const nav = useNavigate();
 
   // ALL RESTAURANTS
   const [newRestaurant, setNewRestaurant] = useState({});
@@ -26,7 +28,14 @@ function Restaurant() {
   const [showDiv, setShowDiv] = useState(false);
 
   function deleteRestaurant(id) {
-    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, { method: 'DELETE' })
+    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
       .then((response) => {
         if (response.status === 200) {
           const remaining = restaurants.filter(item => id !== item.id)
@@ -41,6 +50,7 @@ function Restaurant() {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(newRestaurant)
@@ -51,12 +61,15 @@ function Restaurant() {
           setRestaurantCity('');
           setRestaurantAdress('');
           setRestaurantWorkHours('');
-          fetch("http://127.0.0.1:8000/api/v1/restaurants")
-            .then(res => res.json())
-            .then(
-              (result) => {
-                setRestaurants(result);
-              })
+          fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            }
+          }).then(res => res.json())
+            .then((result) => {
+              setRestaurants(result);
+            })
         }
       })
   }
@@ -67,31 +80,34 @@ function Restaurant() {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(editedRestaurant)
+    }).then((response) => {
+      if (response.status === 200) {
+        fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        }).then(res => res.json())
+          .then((result) => {
+            setRestaurants(result);
+            setShowDiv(!showDiv);
+          })
+      }
     })
-      .then((response) => {
-        if (response.status === 200) {
-          fetch("http://127.0.0.1:8000/api/v1/restaurants")
-            .then(res => res.json())
-            .then(
-              (result) => {
-                setRestaurants(result);
-                setShowDiv(!showDiv);
-              })
-        }
-      })
   }
 
   function showEdit(id) {
     setShowDiv(!showDiv);
-    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setRestaurant(result[0]);
-        })
+    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json())
+      .then((result) => {
+        setRestaurant(result[0]);
+      })
   }
 
   if (sortOrder === true) {
@@ -131,14 +147,23 @@ function Restaurant() {
   }
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/restaurants")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setRestaurants(result);
-          setIsLoaded(true);
-        },
-        (error) => { setError(error); setIsLoaded(true); })
+    if (!token) return nav("/login");
+    fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => {
+      if (!res.ok) {
+        setError(res.statusText);
+        setIsLoaded(true);
+      } else {
+        return res.json();
+      }
+    }).then((result) => {
+      setRestaurants(result);
+      setIsLoaded(true);
+    }, (error) => {
+      setError(error);
+      setIsLoaded(true);
+    })
   }, [])
 
   if (!isLoaded) {

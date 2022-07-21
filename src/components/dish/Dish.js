@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Dish.module.css'
 
 function Dish() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [token, _] = useState(localStorage.getItem("token"));
+  const nav = useNavigate();
 
   const [dishes, setDishes] = useState([]);
   const [dish, setDish] = useState([]);
@@ -17,33 +20,28 @@ function Dish() {
   const [dishName, setDishName] = useState('');
   const [dishPrice, setDishPrice] = useState('');
   const [imageLink, setImageLink] = useState('');
-  const [restaurantId, setRestaurantId] = useState('');
 
   // DISH TO EDIT
-  // const [newName, setNewName] = useState('');
-  // const [newPrice, setNewPrice] = useState('');
-  // const [newImageLink, setNewImageLink] = useState('');
-  // const [newRestaurantId, setNewRestaurantId] = useState('');
   const [editedDish, setEditedDish] = useState({});
-
   const [showDiv, setShowDiv] = useState(false);
 
   // RATINGS
   const [rating, setRating] = useState('');
   const [ratings, setRatings] = useState([]);
-
   const [rateMessage, setRateMessage] = useState(false);
   const [loadRating, setLoadRatings] = useState(false);
 
 
   function deleteDish(id, e) {
-    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, { method: 'DELETE' })
-      .then((response) => {
-        if (response.status === 200) {
-          const remaining = dishes.filter(item => id !== item.id)
-          setDishes(remaining)
-        }
-      });
+    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then((response) => {
+      if (response.status === 200) {
+        const remaining = dishes.filter(item => id !== item.id)
+        setDishes(remaining)
+      }
+    });
   }
 
   function addDish(e) {
@@ -52,6 +50,7 @@ function Dish() {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(newDish)
@@ -61,26 +60,28 @@ function Dish() {
           setDishName('');
           setDishPrice('');
           setImageLink('');
-          setRestaurantId('');
-          fetch("http://127.0.0.1:8000/api/v1/dishes")
-            .then(res => res.json())
-            .then(
-              (result) => {
-                setDishes(result);
-              })
+          fetch("http://127.0.0.1:8000/api/v1/dishes", {
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            }
+          }).then(res => res.json())
+            .then((result) => {
+              setDishes(result);
+            })
         }
       })
   }
 
   function showEdit(id) {
-    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setDish(result);
-          setShowDiv(!showDiv);
-          // setEditLoaded(true);
-        })
+    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json())
+      .then((result) => {
+        setDish(result);
+        setShowDiv(!showDiv);
+        // setEditLoaded(true);
+      })
   }
 
   function updateDish(id, e) {
@@ -89,19 +90,20 @@ function Dish() {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(editedDish)
     })
       .then((response) => {
         if (response.status === 200) {
-          fetch("http://127.0.0.1:8000/api/v1/dishes")
-            .then(res => res.json())
-            .then(
-              (result) => {
-                setDishes(result);
-                setShowDiv(!showDiv);
-              })
+          fetch("http://127.0.0.1:8000/api/v1/dishes", {
+            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+          }).then(res => res.json())
+            .then((result) => {
+              setDishes(result);
+              setShowDiv(!showDiv);
+            })
         }
       })
   }
@@ -112,19 +114,19 @@ function Dish() {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         rating: rating,
         dish_id: id
       })
+    }).then((response) => {
+      if (response.status === 201) {
+        setRateMessage(true);
+      }
+      setLoadRatings(!loadRating);
     })
-      .then((response) => {
-        if (response.status === 201) {
-          setRateMessage(true);
-        }
-        setLoadRatings(!loadRating);
-      })
   }
 
   function countAvg(dishId) {
@@ -177,7 +179,7 @@ function Dish() {
 
   if (sortTitle === true) {
     sortTitleAsc();
-  } else if (sortTitle  === false) {
+  } else if (sortTitle === false) {
     sortTitleDesc();
   }
 
@@ -211,37 +213,51 @@ function Dish() {
     });
   }
 
-
-
-
-
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/dishes")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setDishes(result);
-          setIsLoaded(true);
-        },
-        (error) => { setError(error); setIsLoaded(true); })
+    if (!token) return nav("/login");
+    fetch("http://127.0.0.1:8000/api/v1/dishes", {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => {
+      if (!res.ok) {
+        setError(res.statusText);
+        setIsLoaded(true);
+      } else {
+        return res.json();
+      }
+    }).then((result) => {
+      setDishes(result);
+      setIsLoaded(true);
+    }, (error) => {
+      setError(error);
+      setIsLoaded(true);
+    })
   }, [])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/ratings")
-      .then(res => res.json())
+    fetch("http://127.0.0.1:8000/api/v1/ratings", {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json())
       .then(result => {
         setRatings(result);
       });
   }, [loadRating])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/restaurants")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setRestaurants(result);
-        },
-        (error) => { setError(error); setIsLoaded(true); })
+    fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+      headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+    }).then(res => {
+      if (!res.ok) {
+        setError(res.statusText);
+        setIsLoaded(true);
+      } else {
+        return res.json();
+      }
+    }).then((result) => {
+      setRestaurants(result);
+    }, (error) => {
+      setError(error);
+      setIsLoaded(true);
+    })
   }, [])
 
   if (!isLoaded) {
