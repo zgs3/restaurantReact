@@ -5,6 +5,7 @@ import Restaurant from './components/restaurant/Restaurant';
 import Dish from './components/dish/Dish';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/login/Login';
+import Register from './components/register/Register';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route exact path='/restaurants' element={<Restaurant />} />
           <Route exact path='/dishes' element={<Dish />} />
           <Route exact path='/login' element={<Login />} />
+          <Route exact path='/register' element={<Register />} />
         </Routes>
       </BrowserRouter>
     </div>

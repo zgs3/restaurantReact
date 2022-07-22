@@ -5,7 +5,7 @@ import styles from './Dish.module.css'
 function Dish() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [token, _] = useState(localStorage.getItem("token"));
+  const [token, _] = useState(localStorage.getItem('token'));
   const nav = useNavigate();
 
   const [dishes, setDishes] = useState([]);

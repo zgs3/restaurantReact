@@ -6,7 +6,8 @@ function loginUser(credentials) {
     {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
-    }).then(data => data.json())
+    })
+    .then(data => data.json())
 }
 
 function Login() {
@@ -25,31 +26,36 @@ function Login() {
     setToken(loginInfo["authorisation"]["token"]);
     localStorage.setItem('token', loginInfo["authorisation"]["token"]);
   }
+
   return (
     <div className='container'>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Enter email"
-          />
-          <small className="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div className="form-group">
-          <label htmlFor="pass">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-        </div>
-        <br />
-        <button type="submit" className="btn btn-primary">Submit</button>
-      </form>
+      <div className='card p-5 my-5'>
+        <h4 className='card-title mb-4'>Enter your credentials to login</h4>
+        <form onSubmit={handleSubmit}>
+          <div className='form-group'>
+            <label htmlFor='inputEmail'>Email address</label>
+            <input
+              type="email"
+              name='inputEmail'
+              className="form-control"
+              onChange={e => setEmail(e.target.value)}
+              placeholder='Enter email'
+            />
+            <small className='form-text text-muted'>We'll never share your email with anyone else.</small>
+          </div>
+          <div className='form-group'>
+            <label htmlFor="pass">Password</label>
+            <input
+              type='password'
+              className='form-control'
+              onChange={e => setPassword(e.target.value)}
+              placeholder='Password'
+            />
+          </div>
+          <br />
+          <button type='submit' className='btn btn-primary'>Submit</button>
+        </form>
+      </div>
     </div>
   )
 }

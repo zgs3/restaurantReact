@@ -8,7 +8,7 @@ function Restaurant() {
   const [restaurants, setRestaurants] = useState([]);
   const [sortOrder, setSordOrder] = useState();
   const [restaurant, setRestaurant] = useState([]);
-  const [token, _] = useState(localStorage.getItem("token"));
+  const [token, _] = useState(localStorage.getItem('token'));
   const nav = useNavigate();
 
   // ALL RESTAURANTS

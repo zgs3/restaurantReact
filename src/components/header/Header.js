@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Header() {
-  const [token, _] = useState(localStorage.getItem("token"));
+  const [token, _] = useState(localStorage.getItem('token'));
   const nav = useNavigate();
 
   const removeToken = () => {
@@ -19,7 +18,8 @@ function Header() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-      }).then(removeToken())
+      })
+      .then(removeToken())
       .then(nav("/login"))
   }
 
@@ -51,7 +51,7 @@ function Header() {
                   <Link className="navbar-brand" to="/login">Login</Link>
                 </li>
                 <li className="nav-item">
-                  {/* <Link className="navbar-brand" to="/register">Register</Link> */}
+                  <Link className="navbar-brand" to="/register">Register</Link>
                 </li>
                 <li className="nav-item">
                   <button className="navbar-brand" onClick={() => logout()} >Logout</button>
