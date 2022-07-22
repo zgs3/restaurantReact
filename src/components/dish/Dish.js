@@ -6,6 +6,7 @@ function Dish() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [token, _] = useState(localStorage.getItem('token'));
+  const [admin, __] = useState(localStorage.getItem('admin'));
   const nav = useNavigate();
 
   const [dishes, setDishes] = useState([]);
@@ -80,7 +81,6 @@ function Dish() {
       .then((result) => {
         setDish(result);
         setShowDiv(!showDiv);
-        // setEditLoaded(true);
       })
   }
 
@@ -132,7 +132,7 @@ function Dish() {
   function countAvg(dishId) {
     let rateCount = 0;
     let sumOfRates = 0;
-    ratings.map(rating => {
+    ratings.filter(rating => rating.dish_id === dishId).map(rating => {
       if (rating.dish_id === dishId) {
         rateCount++;
         sumOfRates += rating.rating;
@@ -297,7 +297,11 @@ function Dish() {
                   </button>
                 </th>
                 <th>Rate!</th>
-                <th>Actions</th>
+                {(admin)
+                  ? <th>Actions</th>
+                  : null
+                }
+                {/* <th>Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -327,152 +331,155 @@ function Dish() {
                       </div>
                     </form>
                   </td>
-
-                  <td>
-                    <button
-                      className="btn btn-dark"
-                      onClick={(e) => deleteDish(dish.id, e)}>
-                      Delete
-                    </button>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        showEdit(dish.id)
-                      }}>
-                      Edit
-                    </button>
-                  </td>
+                  {(admin)
+                    ? <td>
+                      <button
+                        className="btn btn-dark"
+                        onClick={(e) => deleteDish(dish.id, e)}>
+                        Delete
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          showEdit(dish.id)
+                        }}>
+                        Edit
+                      </button>
+                    </td>
+                    : null
+                  }
                 </tr>)
               )}
             </tbody>
           </table>
         </div >
-
-        <div className='container'>
-          {(showDiv)
-            ?
-            <div className="container">
-              <div className="card p-5">
-                <h2 className='mb-3'>Update: {dish.name}</h2>
-                <form className='row g-3'>
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='name'
-                      className='form-control m-auto'
-                      placeholder={dish.name}
-                      onChange={(e) => {
-                        // setNewName(e.target.value);
-                        setEditedDish({ ...editedDish, name: e.target.value });
-                      }} />
-                  </div>
-
-                  <div className='row-md-6'>
-                    <input
-                      type="number"
-                      name='price'
-                      placeholder={dish.price}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        // setNewPrice(e.target.value);
-                        setEditedDish({ ...editedDish, price: e.target.value });
-                      }} />
-                  </div>
-
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='imageLink'
-                      placeholder={dish.image_link}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        // setNewImageLink(e.target.value);
-                        setEditedDish({ ...editedDish, image_link: e.target.value });
-                      }} />
-                  </div>
-                  <div className='row-md-6'>
-
-                    <select
-                      className="form-select"
-                      onChange={(e) => {
-                        setEditedDish({ ...editedDish, restaurant_id: e.target.value })
-                      }}>
-                      <option value={dish.restaurant_id} >{dish.restaurant.title}</option>
-                      {restaurants.filter(selected => selected.title !== dish.restaurant.title).map(restaurant => (
-                        <option key={restaurant.id} value={restaurant.id} >{restaurant.title}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className='my-4'>
-                    <input className='btn btn-success px-5' type='submit' value='Edit' onClick={(e) => updateDish(dish.id, e)} />
-                  </div>
-                </form>
-
-              </div>
-            </div>
-            :
-            <div>
-
+        {(admin)
+          ?
+          <div className='container'>
+            {(showDiv)
+              ?
               <div className="container">
                 <div className="card p-5">
-                  <h2 className='mb-3'>Add new dish</h2>
+                  <h2 className='mb-3'>Update: {dish.name}</h2>
                   <form className='row g-3'>
                     <div className='row-md-6'>
                       <input
                         type="text"
-                        name='title'
+                        name='name'
                         className='form-control m-auto'
-                        placeholder='Name'
-                        value={dishName}
+                        placeholder={dish.name}
                         onChange={(e) => {
-                          setDishName(e.target.value);
-                          setNewDish({ ...newDish, name: e.target.value });
+                          // setNewName(e.target.value);
+                          setEditedDish({ ...editedDish, name: e.target.value });
                         }} />
                     </div>
+
                     <div className='row-md-6'>
                       <input
                         type="number"
                         name='price'
-                        placeholder='Price in Euros'
+                        placeholder={dish.price}
                         className='form-control m-auto'
-                        value={dishPrice}
                         onChange={(e) => {
-                          setDishPrice(e.target.value);
-                          setNewDish({ ...newDish, price: e.target.value });
+                          // setNewPrice(e.target.value);
+                          setEditedDish({ ...editedDish, price: e.target.value });
                         }} />
                     </div>
+
                     <div className='row-md-6'>
                       <input
                         type="text"
                         name='imageLink'
-                        placeholder='Image link'
+                        placeholder={dish.image_link}
                         className='form-control m-auto'
-                        value={imageLink}
                         onChange={(e) => {
-                          setImageLink(e.target.value);
-                          setNewDish({ ...newDish, image_link: e.target.value });
+                          // setNewImageLink(e.target.value);
+                          setEditedDish({ ...editedDish, image_link: e.target.value });
                         }} />
                     </div>
                     <div className='row-md-6'>
-                      <select className="form-select" onChange={(e) => {
-                        setNewDish({ ...newDish, restaurant_id: e.target.value })
-                      }}>
-                        <option selected disabled aria-required>Select a restaurant</option>
-                        {restaurants.map(restaurant => (
-                          <option key={restaurant.id} value={restaurant.id}>{restaurant.title}</option>
+
+                      <select
+                        className="form-select"
+                        onChange={(e) => {
+                          setEditedDish({ ...editedDish, restaurant_id: e.target.value })
+                        }}>
+                        <option value={dish.restaurant_id} >{dish.restaurant.title}</option>
+                        {restaurants.filter(selected => selected.title !== dish.restaurant.title).map(restaurant => (
+                          <option key={restaurant.id} value={restaurant.id} >{restaurant.title}</option>
                         ))}
                       </select>
                     </div>
                     <div className='my-4'>
-                      <input className='btn btn-success px-5' type='submit' value='Add' onClick={(e) => addDish(e)} />
+                      <input className='btn btn-success px-5' type='submit' value='Edit' onClick={(e) => updateDish(dish.id, e)} />
                     </div>
-
                   </form>
+
                 </div>
               </div>
-            </div>
-          }
-        </div >
+              :
+              <div>
+                <div className="container">
+                  <div className="card p-5">
+                    <h2 className='mb-3'>Add new dish</h2>
+                    <form className='row g-3'>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='title'
+                          className='form-control m-auto'
+                          placeholder='Name'
+                          value={dishName}
+                          onChange={(e) => {
+                            setDishName(e.target.value);
+                            setNewDish({ ...newDish, name: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <input
+                          type="number"
+                          name='price'
+                          placeholder='Price in Euros'
+                          className='form-control m-auto'
+                          value={dishPrice}
+                          onChange={(e) => {
+                            setDishPrice(e.target.value);
+                            setNewDish({ ...newDish, price: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='imageLink'
+                          placeholder='Image link'
+                          className='form-control m-auto'
+                          value={imageLink}
+                          onChange={(e) => {
+                            setImageLink(e.target.value);
+                            setNewDish({ ...newDish, image_link: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <select className="form-select" onChange={(e) => {
+                          setNewDish({ ...newDish, restaurant_id: e.target.value })
+                        }}>
+                          <option selected disabled aria-required>Select a restaurant</option>
+                          {restaurants.map(restaurant => (
+                            <option key={restaurant.id} value={restaurant.id}>{restaurant.title}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className='my-4'>
+                        <input className='btn btn-success px-5' type='submit' value='Add' onClick={(e) => addDish(e)} />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            }
+          </div >
+          : null
+        }
       </>
     );
   }

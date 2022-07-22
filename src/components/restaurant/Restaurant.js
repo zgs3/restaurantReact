@@ -9,6 +9,7 @@ function Restaurant() {
   const [sortOrder, setSordOrder] = useState();
   const [restaurant, setRestaurant] = useState([]);
   const [token, _] = useState(localStorage.getItem('token'));
+  const [admin, __] = useState(localStorage.getItem('admin'));
   const nav = useNavigate();
 
   // ALL RESTAURANTS
@@ -188,7 +189,10 @@ function Restaurant() {
                 <th>City</th>
                 <th>Adress</th>
                 <th>Working hours</th>
-                <th>Actions</th>
+                {(admin)
+                  ? <th>Actions</th>
+                  : null
+                }
               </tr>
             </thead>
             <tbody>
@@ -198,153 +202,159 @@ function Restaurant() {
                   <td>{restaurant.city}</td>
                   <td>{restaurant.adress}</td>
                   <td>{restaurant.work_hours}</td>
-                  <td>
-                    <button
-                      className="btn btn-dark"
-                      onClick={(e) => deleteRestaurant(restaurant.id)}>
-                      Delete
-                    </button>
-                    <button
-                      className="btn btn-primary"
-                      onClick={(e) => {
-                        showEdit(restaurant.id)
-                      }}>
-                      Update
-                    </button>
-                  </td>
+                  {(admin)
+                    ? <td>
+                      <button
+                        className="btn btn-dark"
+                        onClick={(e) => deleteRestaurant(restaurant.id)}>
+                        Delete
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={(e) => {
+                          showEdit(restaurant.id)
+                        }}>
+                        Update
+                      </button>
+                    </td>
+                    : null
+                  }
                 </tr>)
               )}
             </tbody>
           </table>
         </div >
-
-        <div className='container'>
-          {(showDiv)
-            ?
-            <div className="container">
-              <div className="card p-5">
-                <h2 className='mb-3'>Update: {restaurant.title}</h2>
-                <form className='row g-3'>
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='title'
-                      className='form-control m-auto'
-                      placeholder={restaurant.title}
-                      onChange={(e) => {
-                        setNewTitle(e.target.value);
-                        setEditedRestaurant({ ...editedRestaurant, title: e.target.value });
-                      }} />
-                  </div>
-
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='city'
-                      placeholder={restaurant.city}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        setNewCity(e.target.value);
-                        setEditedRestaurant({ ...editedRestaurant, city: e.target.value });
-                      }} />
-                  </div>
-
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='adress'
-                      placeholder={restaurant.adress}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        setNewAdress(e.target.value);
-                        setEditedRestaurant({ ...editedRestaurant, adress: e.target.value });
-                      }} />
-                  </div>
-                  <div className='row-md-6'>
-                    <input
-                      type="text"
-                      name='workingHours'
-                      placeholder={restaurant.work_hours}
-                      className='form-control m-auto'
-                      onChange={(e) => {
-                        setNewWorkHours(e.target.value);
-                        setEditedRestaurant({ ...editedRestaurant, work_hours: e.target.value });
-                      }} />
-                  </div>
-
-                  <div className='my-4'>
-                    <input className='btn btn-success px-5' type='submit' value='Update' onClick={(e) => updateRestaurant(restaurant.id, e)} />
-                  </div>
-                </form>
-
-              </div>
-            </div>
-            :
-            <div>
-
+        {(admin)
+          ?
+          <div className='container'>
+            {(showDiv)
+              ?
               <div className="container">
                 <div className="card p-5">
-                  <h2 className='mb-3'>Add new restaurant</h2>
+                  <h2 className='mb-3'>Update: {restaurant.title}</h2>
                   <form className='row g-3'>
                     <div className='row-md-6'>
                       <input
                         type="text"
                         name='title'
                         className='form-control m-auto'
-                        placeholder='Title'
-                        value={restaurantTitle}
+                        placeholder={restaurant.title}
                         onChange={(e) => {
-                          setRestaurantTitle(e.target.value);
-                          setNewRestaurant({ ...newRestaurant, title: e.target.value });
+                          setNewTitle(e.target.value);
+                          setEditedRestaurant({ ...editedRestaurant, title: e.target.value });
                         }} />
                     </div>
+
                     <div className='row-md-6'>
                       <input
                         type="text"
                         name='city'
-                        placeholder='City'
+                        placeholder={restaurant.city}
                         className='form-control m-auto'
-                        value={restaurantCity}
                         onChange={(e) => {
-                          setRestaurantCity(e.target.value);
-                          setNewRestaurant({ ...newRestaurant, city: e.target.value });
+                          setNewCity(e.target.value);
+                          setEditedRestaurant({ ...editedRestaurant, city: e.target.value });
                         }} />
                     </div>
+
                     <div className='row-md-6'>
                       <input
                         type="text"
                         name='adress'
-                        placeholder='Adress'
+                        placeholder={restaurant.adress}
                         className='form-control m-auto'
-                        value={restaurantAdress}
                         onChange={(e) => {
-                          setRestaurantAdress(e.target.value);
-                          setNewRestaurant({ ...newRestaurant, adress: e.target.value });
+                          setNewAdress(e.target.value);
+                          setEditedRestaurant({ ...editedRestaurant, adress: e.target.value });
                         }} />
                     </div>
                     <div className='row-md-6'>
                       <input
                         type="text"
-                        name='workHours'
-                        placeholder='Working hours'
+                        name='workingHours'
+                        placeholder={restaurant.work_hours}
                         className='form-control m-auto'
-                        value={restaurantWorkHours}
                         onChange={(e) => {
-                          setRestaurantWorkHours(e.target.value);
-                          setNewRestaurant({ ...newRestaurant, work_hours: e.target.value });
+                          setNewWorkHours(e.target.value);
+                          setEditedRestaurant({ ...editedRestaurant, work_hours: e.target.value });
                         }} />
                     </div>
 
                     <div className='my-4'>
-                      <input className='btn btn-success px-5' type='submit' value='Add' onClick={(e) => addRestaurant(e)} />
+                      <input className='btn btn-success px-5' type='submit' value='Update' onClick={(e) => updateRestaurant(restaurant.id, e)} />
                     </div>
-
                   </form>
+
                 </div>
               </div>
-            </div>
-          }
-        </div>
+              :
+              <div>
+
+                <div className="container">
+                  <div className="card p-5">
+                    <h2 className='mb-3'>Add new restaurant</h2>
+                    <form className='row g-3'>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='title'
+                          className='form-control m-auto'
+                          placeholder='Title'
+                          value={restaurantTitle}
+                          onChange={(e) => {
+                            setRestaurantTitle(e.target.value);
+                            setNewRestaurant({ ...newRestaurant, title: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='city'
+                          placeholder='City'
+                          className='form-control m-auto'
+                          value={restaurantCity}
+                          onChange={(e) => {
+                            setRestaurantCity(e.target.value);
+                            setNewRestaurant({ ...newRestaurant, city: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='adress'
+                          placeholder='Adress'
+                          className='form-control m-auto'
+                          value={restaurantAdress}
+                          onChange={(e) => {
+                            setRestaurantAdress(e.target.value);
+                            setNewRestaurant({ ...newRestaurant, adress: e.target.value });
+                          }} />
+                      </div>
+                      <div className='row-md-6'>
+                        <input
+                          type="text"
+                          name='workHours'
+                          placeholder='Working hours'
+                          className='form-control m-auto'
+                          value={restaurantWorkHours}
+                          onChange={(e) => {
+                            setRestaurantWorkHours(e.target.value);
+                            setNewRestaurant({ ...newRestaurant, work_hours: e.target.value });
+                          }} />
+                      </div>
+
+                      <div className='my-4'>
+                        <input className='btn btn-success px-5' type='submit' value='Add' onClick={(e) => addRestaurant(e)} />
+                      </div>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          : null
+        }
       </>
     );
   }

@@ -3,11 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function Header() {
   const [token, _] = useState(localStorage.getItem('token'));
+  const [admin, __] = useState(localStorage.getItem('admin'));
   const nav = useNavigate();
 
   const removeToken = () => {
-    localStorage.removeItem('token');
-  };
+    if (admin) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('admin');
+    } else localStorage.removeItem('token');
+  }
 
   function logout() {
     fetch('http://127.0.0.1:8000/api/logout',

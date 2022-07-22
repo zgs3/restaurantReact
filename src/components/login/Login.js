@@ -6,12 +6,11 @@ function loginUser(credentials) {
     {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
-    })
-    .then(data => data.json())
+    }).then(data => data.json())
 }
 
 function Login() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const nav = useNavigate();
@@ -23,8 +22,14 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const loginInfo = await loginUser({ email, password });
-    setToken(loginInfo["authorisation"]["token"]);
-    localStorage.setItem('token', loginInfo["authorisation"]["token"]);
+    if ((loginInfo['user']['admin']) && loginInfo['user']['admin'] == 1) {
+      setToken(loginInfo["authorisation"]["token"]);
+      localStorage.setItem('token', loginInfo["authorisation"]["token"]);
+      localStorage.setItem('admin', loginInfo["authorisation"]["token"]);
+    } else {
+      setToken(loginInfo["authorisation"]["token"]);
+      localStorage.setItem('token', loginInfo["authorisation"]["token"]);
+    }
   }
 
   return (
