@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Dish.module.css'
 import CreateDish from './createDish/CreateDish';
 import UpdateDish from './updateDish/UpdateDish';
+import FilterDish from './filterDish/FilterDish';
+import SearchDish from './searchDish/SearchDish';
+import RateForm from './rateForm/RateForm';
 
 function Dish() {
   const [error, setError] = useState(null);
@@ -12,17 +15,18 @@ function Dish() {
   const nav = useNavigate();
 
   const [dishes, setDishes] = useState([]);
+  const [allDishes, setAllDishes] = useState([]);
   const [dish, setDish] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [showDiv, setShowDiv] = useState(false);
-  
+
   const [sortPrice, setSordPrice] = useState();
   const [sortTitle, setSordTitle] = useState();
 
-  const [rating, setRating] = useState('');
   const [ratings, setRatings] = useState([]);
   const [rateMessage, setRateMessage] = useState(false);
   const [loadRating, setLoadRatings] = useState(false);
+  const [searchError, setSearchError] = useState(false);
 
   function deleteDish(id) {
     fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
@@ -96,7 +100,7 @@ function Dish() {
       })
   }
 
-  function addRating(id, e) {
+  function addRating(id, rating, e) {
     e.preventDefault();
     fetch("http://127.0.0.1:8000/api/v1/ratings", {
       method: 'POST',
@@ -201,6 +205,28 @@ function Dish() {
     });
   }
 
+  function filterDishes(e, id) {
+    e.preventDefault();
+    const remaining = allDishes.filter(dish => (dish.restaurant_id === parseInt(id)))
+    setDishes(remaining);
+  }
+
+  function resetFilter() {
+    setDishes(allDishes);
+  }
+
+  function handleSearch(e, inputValue) {
+    e.preventDefault();
+    const value = inputValue.toLowerCase();
+    const filtered = allDishes.filter(dish => dish.name.toLowerCase().includes(value))
+    if (filtered.length !== 0) {
+      setDishes(filtered);
+      setSearchError(false);
+    } else {
+      setSearchError(true);
+    }
+  }
+
   useEffect(() => {
     if (!token) return nav("/login");
     fetch("http://127.0.0.1:8000/api/v1/dishes", {
@@ -214,6 +240,7 @@ function Dish() {
       }
     }).then((result) => {
       setDishes(result);
+      setAllDishes(result);
       setIsLoaded(true);
     }, (error) => {
       setError(error);
@@ -256,89 +283,91 @@ function Dish() {
     return (
       <>
         <div className="container">
+          <h1 className='text-center my-4'>List of currently available dishes</h1>
           {(rateMessage)
             ? <div className='d-flex justify-content-center bg-success my-3 p-1 rounded-3'>
               <h4>Thank you for your rating!</h4>
             </div>
             : <span></span>
           }
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr className='fs-4'>
-                <th>Name</th>
-                <th>
-                  Price
-                  <button
-                    className='btn btn-outline-dark p-1 mx-2'
-                    onClick={() => setSordPrice(!sortPrice)}>
-                    Sort
-                  </button>
-                </th>
-                <th>Photo</th>
-                <th>Rating</th>
-                <th>
-                  Available in
-                  <button
-                    className='btn btn-outline-dark p-1 mx-2'
-                    onClick={() => setSordTitle(!sortTitle)}>
-                    Sort
-                  </button>
-                </th>
-                <th>Rate!</th>
-                {(admin)
-                  ? <th>Actions</th>
-                  : null
-                }
-              </tr>
-            </thead>
-            <tbody>
-              {dishes.map(dish => (
-                <tr key={dish.id}>
-                  <td>{dish.name}</td>
-                  <td>{dish.price} Eur.</td>
-                  <td> <img src={dish.image_link} alt='Photo of the dish'></img> </td>
-                  <td className='fs-5'>
-                    {(countAvg(dish.id))
-                      ? countAvg(dish.id).toPrecision(2)
-                      : 'Not rated'
-                    }!
-                  </td>
-                  <td>{dish.restaurant.title}</td>
-                  <td>
-                    <form>
-                      <div className='d-flex'>
-                        <select className="form-select form-select-sm" onChange={(e) => setRating(e.target.value)}>
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                        </select>
-                        <input className='btn btn-success' type='submit' value='Rate!' onClick={(e) => addRating(dish.id, e)} />
-                      </div>
-                    </form>
-                  </td>
+          <div>
+            {(searchError)
+              ? <div className='alert alert-danger'>No matches found.</div>
+              : null
+            }
+            <div className='d-flex justify-content-around px-5 py-2 border rounded-top'>
+              <SearchDish handleSearch={handleSearch} />
+              <FilterDish restaurants={restaurants} filterDishes={filterDishes} resetFilter={resetFilter} />
+            </div>
+          </div>
+          <div className='p-2 border rounded-bottom'>
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr className='fs-4'>
+                  <th>Name</th>
+                  <th>
+                    Price
+                    <button
+                      className='btn btn-outline-dark p-1 mx-2'
+                      onClick={() => setSordPrice(!sortPrice)}>
+                      Sort
+                    </button>
+                  </th>
+                  <th>Photo</th>
+                  <th>Rating</th>
+                  <th>
+                    Available in
+                    <button
+                      className='btn btn-outline-dark p-1 mx-2'
+                      onClick={() => setSordTitle(!sortTitle)}>
+                      Sort
+                    </button>
+                  </th>
+                  <th>Rate!</th>
                   {(admin)
-                    ? <td>
-                      <button
-                        className="btn btn-dark"
-                        onClick={(e) => deleteDish(dish.id, e)}>
-                        Delete
-                      </button>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                          showEdit(dish.id)
-                        }}>
-                        Edit
-                      </button>
-                    </td>
+                    ? <th>Actions</th>
                     : null
                   }
-                </tr>)
-              )}
-            </tbody>
-          </table>
+                </tr>
+              </thead>
+              <tbody>
+                {dishes.map(dish => (
+                  <tr key={dish.id}>
+                    <td>{dish.name}</td>
+                    <td>{dish.price} Eur.</td>
+                    <td> <img src={dish.image_link} alt='Photo of the dish'></img> </td>
+                    <td className='fs-5'>
+                      {(countAvg(dish.id))
+                        ? countAvg(dish.id).toPrecision(2)
+                        : 'Not rated'
+                      }!
+                    </td>
+                    <td>{dish.restaurant.title}</td>
+                    <td>
+                      <RateForm addRating={addRating} dishId={dish.id} />
+                    </td>
+                    {(admin)
+                      ? <td>
+                        <button
+                          className="btn btn-dark"
+                          onClick={(e) => deleteDish(dish.id, e)}>
+                          Delete
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => {
+                            showEdit(dish.id)
+                          }}>
+                          Edit
+                        </button>
+                      </td>
+                      : null
+                    }
+                  </tr>)
+                )}
+              </tbody>
+            </table>
+          </div>
         </div >
         {(admin)
           ? <div className='container'>

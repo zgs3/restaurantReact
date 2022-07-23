@@ -157,6 +157,7 @@ function Restaurant() {
     return (
       <>
         <div className="container">
+        <h1 className='text-center my-4'>List of currently available restaurants</h1>
           <table className="table table-striped table-hover">
             <thead>
               <tr className='fs-4'>
