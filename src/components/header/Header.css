@@ -1,0 +1,19 @@
+.navbar-dark .navbar-brand.activeNav,
+.navbar-dark .navbar-brand.activeNav:focus {
+  color: var(--bs-red);
+}
+
+div .navbar-dark .navbar-brand:hover {
+  color: var(--bs-blue);
+  transition: .3s;
+}
+
+div .nav-item span.navbar-brand  {
+  cursor: pointer;
+}
+
+.navTitle {
+  color: var(--bs-gray-400);
+  font-size: 1.7rem;
+  font-style: italic;
+}

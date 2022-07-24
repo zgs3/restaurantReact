@@ -23,12 +23,12 @@ function Login() {
     event.preventDefault();
     const loginInfo = await loginUser({ email, password });
     if ((loginInfo['user']['admin']) && loginInfo['user']['admin'] == 1) {
-      setToken(loginInfo["authorisation"]["token"]);
-      localStorage.setItem('token', loginInfo["authorisation"]["token"]);
-      localStorage.setItem('admin', loginInfo["authorisation"]["token"]);
+      setToken(loginInfo['authorisation']['token']);
+      localStorage.setItem('token', loginInfo['authorisation']['token']);
+      localStorage.setItem('admin', loginInfo['authorisation']['token']);
     } else {
-      setToken(loginInfo["authorisation"]["token"]);
-      localStorage.setItem('token', loginInfo["authorisation"]["token"]);
+      setToken(loginInfo['authorisation']['token']);
+      localStorage.setItem('token', loginInfo['authorisation']['token']);
     }
   }
 

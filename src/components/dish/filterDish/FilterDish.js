@@ -9,10 +9,11 @@ function FilterDish({ restaurants, filterDishes, resetFilter }) {
       <h5>Filter dishes by restaurant</h5>
       <form className='d-flex gap-2'>
         <select
-          value={selectValue}
+          defaultValue={selectValue}
           className='form-select'
-          onChange={(e) => setSelectedId(e.target.value)}
-        >
+          onChange={(e) => {
+            setSelectedId(e.target.value)
+          }} >
           <option disabled >{selectValue}</option>
           {restaurants.map(restaurant => (
             <option key={restaurant.id} value={restaurant.id} >{restaurant.title}</option>
@@ -20,18 +21,18 @@ function FilterDish({ restaurants, filterDishes, resetFilter }) {
         </select>
         <button
           type='submit'
-          className='btn btn-primary px-2'
-          onClick={(e) => { filterDishes(e, selectedId) }}
-        >
+          className='btn btn-primary btn-sm'
+          onClick={(e) => {
+            filterDishes(e, selectedId)
+          }} >
           Filter
         </button>
         <button
-          className='btn btn-dark px-2'
+          className='btn btn-dark btn-sm'
           onClick={(e) => {
             setSelectValue('Select a restaurant')
-            resetFilter()
-          }}
-        >
+            resetFilter(e)
+          }} >
           Reset
         </button>
       </form>

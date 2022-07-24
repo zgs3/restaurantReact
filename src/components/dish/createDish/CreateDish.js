@@ -9,8 +9,8 @@ function CreateDish({ createDish, restaurants }) {
 
 
   return (
-    <div className="container">
-      <div className="card p-5">
+    <div className="container mb-5">
+      <div className="card py-3 px-5">
         <h2 className='mb-3'>Add new dish</h2>
         <form className='row g-3'>
           <div className='row-md-6'>
@@ -63,7 +63,7 @@ function CreateDish({ createDish, restaurants }) {
               ))}
             </select>
           </div>
-          <div className='my-4'>
+          <div className='mt-3'>
             <input
               className='btn btn-success px-5'
               type='submit' value='Add'

@@ -1,0 +1,8 @@
+.imgContainer {
+  height: 10rem;
+}
+
+td .imgContainer img {
+  width: 15rem;
+  max-height: 10rem;
+}

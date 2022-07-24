@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../../assets/loading.gif'
 import CreateRestaurant from './createRestaurant/CreateRestaurant';
 import UpdateRestaurant from './updateRestaurant/UpdateRestaurant';
 
@@ -135,8 +136,14 @@ function Restaurant() {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => {
       if (!res.ok) {
-        setError(res.statusText);
-        setIsLoaded(true);
+        if (admin) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('admin');
+        } else {
+          localStorage.removeItem('token');
+          setError(res.statusText + '. Please log in first.');
+          setIsLoaded(true);
+        }
       } else {
         return res.json();
       }
@@ -150,70 +157,74 @@ function Restaurant() {
   }, [])
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className='spinnerContainer'>
+        <img src={Spinner}></img>
+      </div>
+    );
   } else if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error}</div>;
   } else {
     return (
       <>
-        <div className="container">
-        <h1 className='text-center my-4'>List of currently available restaurants</h1>
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr className='fs-4'>
-                <th>
-                  Title
-                  <button
-                    className='btn btn-outline-dark p-1 mx-2'
-                    onClick={() => setSordOrder(!sortOrder)}>
-                    Sort
-                  </button>
-                </th>
-                <th>City</th>
-                <th>Adress</th>
-                <th>Working hours</th>
-                {(admin)
-                  ? <th>Actions</th>
-                  : null
-                }
-              </tr>
-            </thead>
-            <tbody>
-              {restaurants.map(restaurant => (
-                <tr key={restaurant.id}>
-                  <td>{restaurant.title}</td>
-                  <td>{restaurant.city}</td>
-                  <td>{restaurant.adress}</td>
-                  <td>{restaurant.work_hours}</td>
+        <div className='container'>
+          <h1 className='text-center my-4'>List of currently available restaurants</h1>
+          <div className='my-2 border border rounded mb-5'>
+            <table className="table table-hover">
+              <thead>
+                <tr className='fs-4 bg-light bg-gradient'>
+                  <th>
+                    Title
+                    <button
+                      className='btn btn-outline-dark px-1 py-0 mx-2'
+                      onClick={() => setSordOrder(!sortOrder)}>
+                      Sort
+                    </button>
+                  </th>
+                  <th>City</th>
+                  <th>Adress</th>
+                  <th>Working hours</th>
                   {(admin)
-                    ? <td>
-                      <button
-                        className="btn btn-dark"
-                        onClick={() => deleteRestaurant(restaurant.id)}>
-                        Delete
-                      </button>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                          showEdit(restaurant.id)
-                        }}>
-                        Update
-                      </button>
-                    </td>
+                    ? <th>Actions</th>
                     : null
                   }
-                </tr>)
-              )}
-            </tbody>
-          </table>
+                </tr>
+              </thead>
+              <tbody>
+                {restaurants.map(restaurant => (
+                  <tr key={restaurant.id}>
+                    <td>{restaurant.title}</td>
+                    <td>{restaurant.city}</td>
+                    <td>{restaurant.adress}</td>
+                    <td>{restaurant.work_hours}</td>
+                    {(admin)
+                      ? <td>
+                        <button
+                          className="btn btn-danger me-1 btn-sm"
+                          onClick={() => deleteRestaurant(restaurant.id)}>
+                          Delete
+                        </button>
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => {
+                            showEdit(restaurant.id)
+                          }}>
+                          Update
+                        </button>
+                      </td>
+                      : null
+                    }
+                  </tr>)
+                )}
+              </tbody>
+            </table>
+          </div>
         </div >
         {(admin)
-          ? <div className='container'>
-            {(showDiv)
-              ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} />
-              : <CreateRestaurant createRestaurant={addRestaurant} />
-            }
-          </div>
+          ? <>{(showDiv)
+            ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} />
+            : <CreateRestaurant createRestaurant={addRestaurant} />
+          }</>
           : null
         }
       </>

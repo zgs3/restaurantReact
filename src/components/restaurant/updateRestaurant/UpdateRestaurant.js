@@ -4,8 +4,8 @@ function UpdateRestaurant({ selectedRestaurant, updateRestaurant }) {
   const [editedRestaurant, setEditedRestaurant] = useState({});
 
   return (
-    <div className="container">
-      <div className="card p-5">
+    <div className="container mb-5">
+      <div className="card py-3 px-5">
         <h2 className='mb-3'>Update: {selectedRestaurant.title}</h2>
         <form className='row g-3'>
           <div className='row-md-6'>
@@ -50,7 +50,7 @@ function UpdateRestaurant({ selectedRestaurant, updateRestaurant }) {
                 setEditedRestaurant({ ...editedRestaurant, work_hours: e.target.value });
               }} />
           </div>
-          <div className='my-4'>
+          <div className='mt-3'>
             <input
               className='btn btn-success px-5'
               type='submit' value='Update'

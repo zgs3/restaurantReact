@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Dish.module.css'
+import './Dish.css'
+import Spinner from '../../assets/loading.gif'
 import CreateDish from './createDish/CreateDish';
 import UpdateDish from './updateDish/UpdateDish';
 import FilterDish from './filterDish/FilterDish';
@@ -20,8 +21,8 @@ function Dish() {
   const [restaurants, setRestaurants] = useState([]);
   const [showDiv, setShowDiv] = useState(false);
 
-  const [sortPrice, setSordPrice] = useState();
-  const [sortTitle, setSordTitle] = useState();
+  const [sortPrice, setSortPrice] = useState();
+  const [sortTitle, setSortTitle] = useState();
 
   const [ratings, setRatings] = useState([]);
   const [rateMessage, setRateMessage] = useState(false);
@@ -211,7 +212,8 @@ function Dish() {
     setDishes(remaining);
   }
 
-  function resetFilter() {
+  function resetFilter(e) {
+    e.preventDefault();
     setDishes(allDishes);
   }
 
@@ -276,7 +278,11 @@ function Dish() {
   }, [])
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className='spinnerContainer'>
+        <img src={Spinner}></img>
+      </div>
+    );
   } else if (error) {
     return <div>Error: {error.message}</div>;
   } else {
@@ -285,31 +291,31 @@ function Dish() {
         <div className="container">
           <h1 className='text-center my-4'>List of currently available dishes</h1>
           {(rateMessage)
-            ? <div className='d-flex justify-content-center bg-success my-3 p-1 rounded-3'>
-              <h4>Thank you for your rating!</h4>
+            ? <div className='alert alert-success text-center fs-4 py-1'>
+              Thank you for your rating!
             </div>
             : <span></span>
           }
           <div>
             {(searchError)
-              ? <div className='alert alert-danger'>No matches found.</div>
+              ? <div className='alert alert-danger text-center fs-4  py-1'>No matches found.</div>
               : null
             }
-            <div className='d-flex justify-content-around px-5 py-2 border rounded-top'>
+            <div className='d-flex justify-content-around px-5 py-2 border rounded-top  bg-light bg-gradient'>
               <SearchDish handleSearch={handleSearch} />
               <FilterDish restaurants={restaurants} filterDishes={filterDishes} resetFilter={resetFilter} />
             </div>
           </div>
-          <div className='p-2 border rounded-bottom'>
-            <table className="table table-striped table-hover">
+          <div className='border border-top-0 rounded-bottom mb-5'>
+            <table className="table table-hover">
               <thead>
-                <tr className='fs-4'>
+                <tr className='fs-4 bg-light bg-gradient'>
                   <th>Name</th>
                   <th>
                     Price
                     <button
-                      className='btn btn-outline-dark p-1 mx-2'
-                      onClick={() => setSordPrice(!sortPrice)}>
+                      className='btn btn-outline-dark px-1 py-0 mx-2'
+                      onClick={() => setSortPrice(!sortPrice)}>
                       Sort
                     </button>
                   </th>
@@ -318,8 +324,8 @@ function Dish() {
                   <th>
                     Available in
                     <button
-                      className='btn btn-outline-dark p-1 mx-2'
-                      onClick={() => setSordTitle(!sortTitle)}>
+                      className='btn btn-outline-dark px-1 py-0 mx-2'
+                      onClick={() => setSortTitle(!sortTitle)}>
                       Sort
                     </button>
                   </th>
@@ -335,7 +341,11 @@ function Dish() {
                   <tr key={dish.id}>
                     <td>{dish.name}</td>
                     <td>{dish.price} Eur.</td>
-                    <td> <img src={dish.image_link} alt='Photo of the dish'></img> </td>
+                    <td>
+                      <div className='d-flex align-items-center imgContainer'>
+                        <img src={dish.image_link} alt='Photo of the dish'></img>
+                      </div>
+                    </td>
                     <td className='fs-5'>
                       {(countAvg(dish.id))
                         ? countAvg(dish.id).toPrecision(2)
@@ -349,12 +359,12 @@ function Dish() {
                     {(admin)
                       ? <td>
                         <button
-                          className="btn btn-dark"
+                          className="btn btn-danger btn-sm me-1"
                           onClick={(e) => deleteDish(dish.id, e)}>
                           Delete
                         </button>
                         <button
-                          className="btn btn-primary"
+                          className="btn btn-primary btn-sm"
                           onClick={() => {
                             showEdit(dish.id)
                           }}>
@@ -370,12 +380,10 @@ function Dish() {
           </div>
         </div >
         {(admin)
-          ? <div className='container'>
-            {(showDiv)
-              ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} />
-              : <CreateDish createDish={addDish} restaurants={restaurants} />
-            }
-          </div >
+          ? <>{(showDiv)
+            ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} />
+            : <CreateDish createDish={addDish} restaurants={restaurants} />
+          }</>
           : null
         }
       </>

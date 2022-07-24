@@ -4,8 +4,8 @@ function UpdateDish({ dish, restaurants, updateDish }) {
   const [editedDish, setEditedDish] = useState({});
 
   return (
-    <div className="container">
-      <div className="card p-5">
+    <div className="container mb-5">
+      <div className="card py-3 px-5">
         <h2 className='mb-3'>Update: {dish.name}</h2>
         <form className='row g-3'>
           <div className='row-md-6'>
@@ -13,9 +13,8 @@ function UpdateDish({ dish, restaurants, updateDish }) {
               type="text"
               name='name'
               className='form-control m-auto'
-              placeholder={dish.name}
+              defaultValue={dish.name}
               onChange={(e) => {
-                // setNewName(e.target.value);
                 setEditedDish({ ...editedDish, name: e.target.value });
               }} />
           </div>
@@ -24,10 +23,9 @@ function UpdateDish({ dish, restaurants, updateDish }) {
             <input
               type="number"
               name='price'
-              placeholder={dish.price}
+              defaultValue={dish.price}
               className='form-control m-auto'
               onChange={(e) => {
-                // setNewPrice(e.target.value);
                 setEditedDish({ ...editedDish, price: e.target.value });
               }} />
           </div>
@@ -36,10 +34,9 @@ function UpdateDish({ dish, restaurants, updateDish }) {
             <input
               type="text"
               name='imageLink'
-              placeholder={dish.image_link}
+              defaultValue={dish.image_link}
               className='form-control m-auto'
               onChange={(e) => {
-                // setNewImageLink(e.target.value);
                 setEditedDish({ ...editedDish, image_link: e.target.value });
               }} />
           </div>
@@ -56,7 +53,7 @@ function UpdateDish({ dish, restaurants, updateDish }) {
               ))}
             </select>
           </div>
-          <div className='my-4'>
+          <div className='mt-3'>
             <input className='btn btn-success px-5' type='submit' value='Edit' onClick={(e) => updateDish(dish.id, editedDish, e)} />
           </div>
         </form>

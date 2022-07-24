@@ -1,11 +1,11 @@
 import './App.css';
 import Header from './components/header/Header';
-import Home from './components/home/Home';
 import Restaurant from './components/restaurant/Restaurant';
 import Dish from './components/dish/Dish';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/login/Login';
 import Register from './components/register/Register';
+import Footer from './components/footer/Footer';
 
 function App() {
   return (
@@ -13,12 +13,13 @@ function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route exact path='/home' element={<Home />} />
+          <Route exact path='/' element={<Restaurant />} />
           <Route exact path='/restaurants' element={<Restaurant />} />
           <Route exact path='/dishes' element={<Dish />} />
           <Route exact path='/login' element={<Login />} />
           <Route exact path='/register' element={<Register />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </div>
   );

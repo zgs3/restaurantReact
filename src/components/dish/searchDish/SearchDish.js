@@ -10,6 +10,7 @@ function SearchDish({ handleSearch }) {
         <input
           className='form-control'
           type='text'
+          placeholder='Enter dish name'
           onChange={(e) => {
             console.log(e.target.value);
             setInputValue(e.target.value);
@@ -17,7 +18,7 @@ function SearchDish({ handleSearch }) {
         </input>
         <button
           type='submit'
-          className='btn btn-primary px-2'
+          className='btn btn-primary btn-sm'
           onClick={(e) => handleSearch(e, inputValue)}
         >
           Search
