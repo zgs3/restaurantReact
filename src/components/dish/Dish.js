@@ -280,12 +280,22 @@ function Dish() {
 
   if (!isLoaded) {
     return (
-      <div className='spinnerContainer'>
-        <img src={Spinner}></img>
-      </div>
+      <>
+        <Header />
+        <div className='spinnerContainer'>
+          <img src={Spinner}></img>
+        </div>
+      </>
     );
   } else if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <>
+        <Header />
+        <div className='container'>
+          <div className='alert alert-danger my-2'>Error: {error}. Please contact support.</div>
+        </div>
+      </>
+    )
   } else {
     return (
       <>

@@ -14,6 +14,7 @@ function Login() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [message, setMessage] = useState('');
   const nav = useNavigate();
 
   useEffect(() => {
@@ -23,13 +24,19 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const loginInfo = await loginUser({ email, password });
-    if ((loginInfo['user']['admin']) && loginInfo['user']['admin'] == 1) {
-      setToken(loginInfo['authorisation']['token']);
-      localStorage.setItem('token', loginInfo['authorisation']['token']);
-      localStorage.setItem('admin', loginInfo['authorisation']['token']);
+    if (loginInfo['message'] === 'Unauthorized') {
+      setMessage('Email or password is incorrect, please try again.')
+    } else if (loginInfo['status'] !== 'success') {
+      setMessage(loginInfo['message'])
     } else {
-      setToken(loginInfo['authorisation']['token']);
-      localStorage.setItem('token', loginInfo['authorisation']['token']);
+      if ((loginInfo['user']['admin']) && loginInfo['user']['admin'] == 1) {
+        setToken(loginInfo['authorisation']['token']);
+        localStorage.setItem('token', loginInfo['authorisation']['token']);
+        localStorage.setItem('admin', loginInfo['authorisation']['token']);
+      } else {
+        setToken(loginInfo['authorisation']['token']);
+        localStorage.setItem('token', loginInfo['authorisation']['token']);
+      }
     }
   }
 
@@ -60,8 +67,11 @@ function Login() {
                 placeholder='Password'
               />
             </div>
-            <br />
-            <button type='submit' className='btn btn-primary'>Submit</button>
+            {(!message)
+              ? <div></div>
+              : <div className='alert alert-danger mt-2 mb-0 py-2'>{message}</div>
+            }
+            <button type='submit' className='btn btn-primary mt-2'>Submit</button>
           </form>
         </div>
       </div>

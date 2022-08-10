@@ -140,6 +140,8 @@ function Restaurant() {
         if (admin) {
           localStorage.removeItem('token');
           localStorage.removeItem('admin');
+          setError(res.statusText)
+          setIsLoaded(true);
         } else {
           localStorage.removeItem('token');
           setError(res.statusText + '. Please log in first.');
@@ -159,12 +161,22 @@ function Restaurant() {
 
   if (!isLoaded) {
     return (
-      <div className='spinnerContainer'>
-        <img src={Spinner}></img>
-      </div>
-    );
+      <>
+        <Header />
+        <div className='spinnerContainer'>
+          <img src={Spinner}></img>
+        </div>
+      </>
+    )
   } else if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <>
+        <Header />
+        <div className='container'>
+          <div className='alert alert-danger my-2'>Error: {error}. Please contact support.</div>
+        </div>
+      </>
+    )
   } else {
     return (
       <>
