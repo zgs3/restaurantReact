@@ -7,6 +7,7 @@ import UpdateDish from './updateDish/UpdateDish';
 import FilterDish from './filterDish/FilterDish';
 import SearchDish from './searchDish/SearchDish';
 import RateForm from './rateForm/RateForm';
+import Header from '../header/Header';
 
 function Dish() {
   const [error, setError] = useState(null);
@@ -288,6 +289,7 @@ function Dish() {
   } else {
     return (
       <>
+        <Header />
         <div className="container">
           <h1 className='text-center my-4'>List of currently available dishes</h1>
           {(rateMessage)

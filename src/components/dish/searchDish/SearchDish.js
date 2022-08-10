@@ -12,7 +12,6 @@ function SearchDish({ handleSearch }) {
           type='text'
           placeholder='Enter dish name'
           onChange={(e) => {
-            console.log(e.target.value);
             setInputValue(e.target.value);
           }}>
         </input>

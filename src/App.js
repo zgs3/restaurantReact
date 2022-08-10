@@ -1,5 +1,4 @@
 import './App.css';
-import Header from './components/header/Header';
 import Restaurant from './components/restaurant/Restaurant';
 import Dish from './components/dish/Dish';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -11,7 +10,6 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header />
         <Routes>
           <Route exact path='/' element={<Restaurant />} />
           <Route exact path='/restaurants' element={<Restaurant />} />

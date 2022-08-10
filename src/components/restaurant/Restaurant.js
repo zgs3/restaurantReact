@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../assets/loading.gif'
+import Header from '../header/Header';
 import CreateRestaurant from './createRestaurant/CreateRestaurant';
 import UpdateRestaurant from './updateRestaurant/UpdateRestaurant';
 
@@ -167,6 +168,7 @@ function Restaurant() {
   } else {
     return (
       <>
+        <Header />
         <div className='container'>
           <h1 className='text-center my-4'>List of currently available restaurants</h1>
           <div className='my-2 border border rounded mb-5'>
