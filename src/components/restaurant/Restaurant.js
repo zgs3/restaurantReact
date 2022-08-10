@@ -17,7 +17,7 @@ function Restaurant() {
   const [showDiv, setShowDiv] = useState(false);
 
   function deleteRestaurant(id) {
-    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants/" + id, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -35,7 +35,7 @@ function Restaurant() {
 
   function addRestaurant(e, restaurant) {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -46,7 +46,7 @@ function Restaurant() {
     })
       .then((response) => {
         if (response.status === 201) {
-          fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+          fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants", {
             headers: {
               'Accept': 'application/json',
               'Authorization': `Bearer ${token}`,
@@ -61,7 +61,7 @@ function Restaurant() {
 
   function updateRestaurant(id, restaurant, e) {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants/" + id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -71,7 +71,7 @@ function Restaurant() {
       body: JSON.stringify(restaurant)
     }).then((response) => {
       if (response.status === 200) {
-        fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+        fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants", {
           headers: {
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -87,7 +87,7 @@ function Restaurant() {
 
   function showEdit(id) {
     setShowDiv(!showDiv);
-    fetch("http://127.0.0.1:8000/api/v1/restaurants/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants/" + id, {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => res.json())
       .then((result) => {
@@ -133,7 +133,7 @@ function Restaurant() {
 
   useEffect(() => {
     if (!token) return nav("/login");
-    fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants", {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => {
       if (!res.ok) {

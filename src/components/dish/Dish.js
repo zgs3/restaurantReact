@@ -31,7 +31,7 @@ function Dish() {
   const [searchError, setSearchError] = useState(false);
 
   function deleteDish(id) {
-    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes/" + id, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     }).then((response) => {
@@ -44,7 +44,7 @@ function Dish() {
 
   function addDish(e, newDish) {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/v1/dishes", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -55,7 +55,7 @@ function Dish() {
     })
       .then((response) => {
         if (response.status === 201) {
-          fetch("http://127.0.0.1:8000/api/v1/dishes", {
+          fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes", {
             headers: {
               'Accept': 'application/json',
               'Authorization': `Bearer ${token}`,
@@ -69,7 +69,7 @@ function Dish() {
   }
 
   function showEdit(id) {
-    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes/" + id, {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => res.json())
       .then((result) => {
@@ -80,7 +80,7 @@ function Dish() {
 
   function updateDish(id, editedDish, e) {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/v1/dishes/" + id, {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes/" + id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -91,7 +91,7 @@ function Dish() {
     })
       .then((response) => {
         if (response.status === 200) {
-          fetch("http://127.0.0.1:8000/api/v1/dishes", {
+          fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes", {
             headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
           }).then(res => res.json())
             .then((result) => {
@@ -104,7 +104,7 @@ function Dish() {
 
   function addRating(id, rating, e) {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/v1/ratings", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/ratings", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -232,7 +232,7 @@ function Dish() {
 
   useEffect(() => {
     if (!token) return nav("/login");
-    fetch("http://127.0.0.1:8000/api/v1/dishes", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/dishes", {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => {
       if (!res.ok) {
@@ -252,7 +252,7 @@ function Dish() {
   }, [])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/ratings", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/ratings", {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => res.json())
       .then(result => {
@@ -261,7 +261,7 @@ function Dish() {
   }, [loadRating])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/restaurants", {
+    fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants", {
       headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
     }).then(res => {
       if (!res.ok) {

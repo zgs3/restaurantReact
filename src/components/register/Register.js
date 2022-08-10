@@ -12,7 +12,7 @@ function Register() {
   function createUser(e) {
     e.preventDefault();
     (password === confirmPassword)
-      ? fetch('http://127.0.0.1:8000/api/register',
+      ? fetch('https://zgs-restaurant-api.herokuapp.com/api/register',
         {
           method: 'POST',
           headers: {

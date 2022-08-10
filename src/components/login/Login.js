@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../header/Header';
 
 async function loginUser(credentials) {
-  return fetch('http://127.0.0.1:8000/api/login',
+  return fetch('https://zgs-restaurant-api.herokuapp.com/api/login',
     {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
