@@ -302,17 +302,13 @@ function Dish() {
         <Header />
         <div className="container">
           <h1 className='text-center my-4'>List of currently available dishes</h1>
-          {(rateMessage)
-            ? <div className='alert alert-success text-center fs-4 py-1'>
+          {(rateMessage) &&
+            <div className='alert alert-success text-center fs-4 py-1'>
               Thank you for your rating!
             </div>
-            : <span></span>
           }
           <div>
-            {(searchError)
-              ? <div className='alert alert-danger text-center fs-4  py-1'>No matches found.</div>
-              : null
-            }
+            {(searchError) && <div className='alert alert-danger text-center fs-4  py-1'>No matches found.</div>}
             <div className='d-flex justify-content-around px-5 py-2 border rounded-top  bg-light bg-gradient'>
               <SearchDish handleSearch={handleSearch} />
               <FilterDish restaurants={restaurants} filterDishes={filterDishes} resetFilter={resetFilter} />
@@ -342,10 +338,7 @@ function Dish() {
                     </button>
                   </th>
                   <th>Rate!</th>
-                  {(admin)
-                    ? <th>Actions</th>
-                    : null
-                  }
+                  {(admin) && <th>Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -368,8 +361,8 @@ function Dish() {
                     <td>
                       <RateForm addRating={addRating} dishId={dish.id} />
                     </td>
-                    {(admin)
-                      ? <td>
+                    {(admin) &&
+                      <td>
                         <button
                           className="btn btn-danger btn-sm me-1"
                           onClick={(e) => deleteDish(dish.id, e)}>
@@ -383,7 +376,6 @@ function Dish() {
                           Edit
                         </button>
                       </td>
-                      : null
                     }
                   </tr>)
                 )}
@@ -391,12 +383,13 @@ function Dish() {
             </table>
           </div>
         </div >
-        {(admin)
-          ? <>{(showDiv)
-            ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} />
-            : <CreateDish createDish={addDish} restaurants={restaurants} />
-          }</>
-          : null
+        {(admin) &&
+          <>
+            {(showDiv)
+              ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} />
+              : <CreateDish createDish={addDish} restaurants={restaurants} />
+            }
+          </>
         }
       </>
     );

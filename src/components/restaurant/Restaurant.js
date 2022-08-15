@@ -198,10 +198,7 @@ function Restaurant() {
                   <th>City</th>
                   <th>Adress</th>
                   <th>Working hours</th>
-                  {(admin)
-                    ? <th>Actions</th>
-                    : null
-                  }
+                  {(admin) && <th>Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -211,8 +208,8 @@ function Restaurant() {
                     <td>{restaurant.city}</td>
                     <td>{restaurant.adress}</td>
                     <td>{restaurant.work_hours}</td>
-                    {(admin)
-                      ? <td>
+                    {(admin) &&
+                      <td>
                         <button
                           className="btn btn-danger me-1 btn-sm"
                           onClick={() => deleteRestaurant(restaurant.id)}>
@@ -226,7 +223,6 @@ function Restaurant() {
                           Update
                         </button>
                       </td>
-                      : null
                     }
                   </tr>)
                 )}
@@ -234,12 +230,13 @@ function Restaurant() {
             </table>
           </div>
         </div >
-        {(admin)
-          ? <>{(showDiv)
-            ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} />
-            : <CreateRestaurant createRestaurant={addRestaurant} />
-          }</>
-          : null
+        {(admin) &&
+          <>
+            {(showDiv)
+              ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} />
+              : <CreateRestaurant createRestaurant={addRestaurant} />
+            }
+          </>
         }
       </>
     );
