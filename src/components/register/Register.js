@@ -37,21 +37,13 @@ function Register() {
             setMessage(res.message);
           }
         })
-      : setMessage('Password dos not match, please try again.')
+      : setMessage('Password doe\'s not match, please try again.')
   }
 
   return (
     <>
       <Header />
       <div className='container'>
-        {(!message)
-          ? <div></div>
-          : (message !== 'User created succesfully, you can now login following this')
-            ? <div className='alert alert-danger'>{message}</div>
-            : <div className='alert alert-success'>{message}
-              <Link className="text-decoration-none" to="/login"> link.</Link>
-            </div>
-        }
         <div className='card p-5 my-5'>
           <h4 className='card-title mb-4'>Registration</h4>
           <form onSubmit={(e) => createUser(e)}>
@@ -97,8 +89,15 @@ function Register() {
                 value={confirmPassword}
               />
             </div>
-            <br />
-            <button type='submit' className='btn btn-primary'>Submit</button>
+            {(!message)
+              ? <div></div>
+              : (message !== 'User created succesfully, you can now login following this')
+                ? <div className='alert alert-danger mt-2 mb-0 py-2'>{message}</div>
+                : <div className='alert alert-success mt-2 mb-0 py-2'>{message}
+                  <Link className="text-decoration-none" to="/login"> link.</Link>
+                </div>
+            }
+            <button type='submit' className='btn btn-primary mt-2'>Submit</button>
           </form>
         </div>
       </div>
