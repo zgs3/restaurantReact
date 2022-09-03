@@ -7,7 +7,13 @@ async function loginUser(credentials) {
     {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
-    }).then(data => data.json())
+    }).then(data => {
+      if (data.status == 200) {
+        return data.json()
+      } else {
+        return data
+      }
+    })
 }
 
 function Login() {
@@ -24,7 +30,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const loginInfo = await loginUser({ email, password });
-    if (loginInfo['message'] === 'Unauthorized') {
+    if (loginInfo['statusText'] == 'Unauthorized') {
       setMessage('Email or password is incorrect, please try again.')
     } else if (loginInfo['status'] !== 'success') {
       setMessage(loginInfo['message'])
