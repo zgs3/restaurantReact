@@ -15,6 +15,7 @@ function Restaurant() {
   const [admin, __] = useState(localStorage.getItem('admin'));
   const nav = useNavigate();
   const [showDiv, setShowDiv] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   function deleteRestaurant(id) {
     fetch("https://zgs-restaurant-api.herokuapp.com/api/v1/restaurants/" + id, {
@@ -99,6 +100,14 @@ function Restaurant() {
     sortAscending();
   } else if (sortOrder === false) {
     sortDescending();
+  }
+
+  const hideCreateForm = () => {
+    setShowCreateForm(false)
+  }
+
+  const hideUpdateForm = () => {
+    setShowDiv(false)
   }
 
   function sortAscending() {
@@ -228,13 +237,28 @@ function Restaurant() {
                 )}
               </tbody>
             </table>
+            {(admin) &&
+              <>
+                {(showCreateForm)
+                  ? <CreateRestaurant createRestaurant={addRestaurant} hideCreateForm={hideCreateForm} />
+                  : <button
+                    className='btn btn-success m-2'
+                    onClick={() => {
+                      setShowCreateForm(!showCreateForm)
+                      setShowDiv(false)
+                    }}>
+                    Add new restaurant
+                  </button>
+                }
+              </>
+            }
           </div>
         </div >
         {(admin) &&
           <>
             {(showDiv)
-              ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} />
-              : <CreateRestaurant createRestaurant={addRestaurant} />
+              ? <UpdateRestaurant updateRestaurant={updateRestaurant} selectedRestaurant={restaurant} hideUpdateForm={hideUpdateForm} />
+              : null
             }
           </>
         }

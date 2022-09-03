@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 
-function UpdateRestaurant({ selectedRestaurant, updateRestaurant }) {
+function UpdateRestaurant({ selectedRestaurant, updateRestaurant, hideUpdateForm }) {
   const [editedRestaurant, setEditedRestaurant] = useState({});
 
   return (
     <div className="container mb-5">
       <div className="card py-3 px-5">
-        <h2 className='mb-3'>Update: {selectedRestaurant.title}</h2>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h2 className='mb-3'>Update: {selectedRestaurant.title}</h2>
+          <button className='btn btn-danger' onClick={() => hideUpdateForm()}>X</button>
+        </div>
         <form className='row g-3'>
           <div className='row-md-6'>
             <input

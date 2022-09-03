@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function CreateDish({ createDish, restaurants }) {
+function CreateDish({ createDish, restaurants, hideCreateForm }) {
   const [newDish, setNewDish] = useState({});
   const [dishName, setDishName] = useState('');
   const [dishPrice, setDishPrice] = useState('');
@@ -11,7 +11,10 @@ function CreateDish({ createDish, restaurants }) {
   return (
     <div className="container mb-5">
       <div className="card py-3 px-5">
-        <h2 className='mb-3'>Add new dish</h2>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h2 className='mb-3'>Add new dish</h2>
+          <button className='btn btn-danger' onClick={() => hideCreateForm()}>X</button>
+        </div>
         <form className='row g-3'>
           <div className='row-md-6'>
             <input

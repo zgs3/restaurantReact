@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function CreateRestaurant({ createRestaurant }) {
+function CreateRestaurant({ createRestaurant, hideCreateForm }) {
   const [newRestaurant, setNewRestaurant] = useState({});
   const [restaurantTitle, setRestaurantTitle] = useState('');
   const [restaurantCity, setRestaurantCity] = useState('');
@@ -11,7 +11,10 @@ function CreateRestaurant({ createRestaurant }) {
     <div>
       <div className="container mb-5">
         <div className="card py-3 px-5">
-          <h2 className='mb-3'>Add new restaurant</h2>
+          <div className='d-flex justify-content-between align-items-center'>
+            <h2 className='mb-3'>Add new restaurant</h2>
+            <button className='btn btn-danger' onClick={() => hideCreateForm()}>X</button>
+          </div>
           <form className='row g-3'>
             <div className='row-md-6'>
               <input

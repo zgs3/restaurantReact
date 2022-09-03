@@ -21,6 +21,7 @@ function Dish() {
   const [dish, setDish] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [showDiv, setShowDiv] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const [sortPrice, setSortPrice] = useState();
   const [sortTitle, setSortTitle] = useState();
@@ -76,6 +77,14 @@ function Dish() {
         setDish(result);
         setShowDiv(!showDiv);
       })
+  }
+
+  const hideCreateForm = () => {
+    setShowCreateForm(false)
+  }
+
+  const hideUpdateForm = () => {
+    setShowDiv(false)
   }
 
   function updateDish(id, editedDish, e) {
@@ -142,8 +151,7 @@ function Dish() {
   }
 
   function sortPriceAsc() {
-    const list = dishes;
-    list.sort((a, b) => {
+    dishes.sort((a, b) => {
       let first = a.price,
         second = b.price;
       if (first < second) {
@@ -157,18 +165,7 @@ function Dish() {
   }
 
   function sortPriceDesc() {
-    const list = dishes;
-    list.sort((a, b) => {
-      let first = a.price,
-        second = b.price;
-      if (first > second) {
-        return -1;
-      }
-      if (first < second) {
-        return 1;
-      }
-      return 0;
-    });
+    dishes.reverse()
   }
 
   if (sortTitle === true) {
@@ -178,8 +175,7 @@ function Dish() {
   }
 
   function sortTitleAsc() {
-    const list = dishes;
-    list.sort((a, b) => {
+    dishes.sort((a, b) => {
       let first = a.restaurant.title.toLowerCase(),
         second = b.restaurant.title.toLowerCase();
       if (first < second) {
@@ -193,18 +189,7 @@ function Dish() {
   }
 
   function sortTitleDesc() {
-    const list = dishes;
-    list.sort((a, b) => {
-      let first = a.restaurant.title.toLowerCase(),
-        second = b.restaurant.title.toLowerCase();
-      if (first > second) {
-        return -1;
-      }
-      if (first < second) {
-        return 1;
-      }
-      return 0;
-    });
+    dishes.reverse()
   }
 
   function filterDishes(e, id) {
@@ -381,13 +366,28 @@ function Dish() {
                 )}
               </tbody>
             </table>
+            {(admin) &&
+              <>
+                {(showCreateForm)
+                  ? <CreateDish createDish={addDish} restaurants={restaurants} hideCreateForm={hideCreateForm} />
+                  : <button
+                    className='btn btn-success m-2'
+                    onClick={() => {
+                      setShowCreateForm(!showCreateForm)
+                      setShowDiv(false)
+                    }}>
+                    Add new dish
+                  </button>
+                }
+              </>
+            }
           </div>
         </div >
         {(admin) &&
           <>
             {(showDiv)
-              ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} />
-              : <CreateDish createDish={addDish} restaurants={restaurants} />
+              ? <UpdateDish dish={dish} restaurants={restaurants} updateDish={updateDish} hideUpdateForm={hideUpdateForm} />
+              : null
             }
           </>
         }
